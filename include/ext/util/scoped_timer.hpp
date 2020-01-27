@@ -41,12 +41,13 @@ inline std::stringstream to_string_stream(int_string_vec const& times) {
 
     // init pushes the first element, so times can never be empty
     if (!times[0].second.empty()) {
-        ss << "= " << times[0].second << " = \n";
+        ss << times[0].second << "\n";
     }
 
     ss << "total   : " << std::setw(width) << std::setprecision(6) << std::fixed
        << static_cast<double>(times[0].first) / Mega << " ms (100.0%) - " << std::setprecision(9) << std::fixed
-       << static_cast<double>(times[0].first) / Giga << " s" << std::endl;
+       << static_cast<double>(times[0].first) / Giga << " s"
+       << "\n";
 
     if (times.size() > 1) {
         for (std::size_t i = 1; i < times.size(); i++) {
@@ -58,7 +59,7 @@ inline std::stringstream to_string_stream(int_string_vec const& times) {
             if (!times[i].second.empty()) {
                 ss << " - " << times[i].second;
             }
-            ss << std::endl;
+            ss << "\n";
         }
     }
     return ss;
@@ -140,7 +141,14 @@ class scoped_timer {
         return callback(calculate());
     }
 
-    std::string to_string(bool disable = true) const {
+    _detail::scoped_timer::int_string_vec run_external(callback_type& cb, bool disable = true) {
+        if (disable) {
+            dismiss();
+        }
+        return cb(calculate());
+    }
+
+    std::string to_string(bool disable = true) {
         if (disable) {
             dismiss();
         }

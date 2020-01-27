@@ -4,7 +4,7 @@
 int main() {}
 #else
 
-    // clang-format off
+// clang-format off
 #include <ext/util/function_cache.hpp>
 #include <ext/util/scoped_timer.hpp>
 #include <future>
@@ -41,4 +41,4 @@ int main() {
 
     return 0;
 }
-#endif
+#endif // defined(EXT_MACOS)

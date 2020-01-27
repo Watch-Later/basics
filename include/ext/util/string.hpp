@@ -9,7 +9,34 @@
 #include <string_view>
 #include <vector>
 
+#ifdef EXT_USE_TERM
+    #include "term.hpp"
+#endif // EXT_USE_TERM
+
 namespace ext { namespace util {
+
+inline std::string section(std::string const& text, std::size_t width = 80, char fill = '=') {
+#ifdef EXT_USE_TERM
+    auto size = get_term_size();
+    if (size.has_value()) {
+        width = std::min(width, size.value().first);
+    }
+#endif // EXT_USE_TERM
+    if (text.length() + 2 >= width) {
+        return text;
+    }
+
+    if (text.empty()) {
+        return std::string(width, fill);
+    }
+
+    auto to_fill = width - text.length();
+    auto odd = to_fill % 2;
+    to_fill -= odd;
+    auto half = (to_fill / 2) - 1;
+
+    return std::string(half + odd, fill) + " " + text + " " + std::string(half, fill);
+}
 
 inline char to_upper(char ch) {
     return static_cast<char>(std::toupper(static_cast<unsigned char>(ch)));
